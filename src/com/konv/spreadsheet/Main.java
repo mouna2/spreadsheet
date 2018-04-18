@@ -18,7 +18,11 @@ import javafx.stage.Stage;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.controlsfx.control.spreadsheet.*;
@@ -221,7 +225,20 @@ public class Main extends Application {
 		ListOfLinks.add(link7); 
 		List<String> RequirementLabels = new ArrayList<String>(); 
 		List<String> StateLabels = new ArrayList<String>(); 
-		 
+		//HASHMAP IMPLEMENTATION  
+		LinkedHashMap<Pair, String> map = new LinkedHashMap<Pair, String>(); 
+		
+		for( InstanceArtifact li: ListOfLinks) {
+		
+		Pair p= new Pair((InstanceArtifact)li.getPropertyValue("linksource"), (InstanceArtifact)li.getPropertyValue("linktarget")); 
+		//System.out.println(p);
+		map.put(p, "*"); 
+		
+ 
+		}
+		
+		
+		
 		
 		int i=1; 
 		
@@ -236,9 +253,28 @@ public class Main extends Application {
 		i=1; 
 		for (InstanceArtifact ia: StateList) {
 			StateLabels.add("State"+i); 
+			
 			i++; 
 		}
 	
+		
+		
+		
+	
+		
+		 for(Map.Entry<Pair, String> entry : map.entrySet()) {
+			 String REQ= entry.getKey().x.getPropertyValue("requirementname").toString(); 
+			 String req_number = REQ.replaceAll("[a-zA-Z]","");
+			 
+			 String STATE= entry.getKey().y.getPropertyValue("statename").toString(); 
+			 String state_number = STATE.replaceAll("[a-zA-Z]","");
+
+			
+         	System.out.println("REQ NUMBER::::::::::::"+ req_number+ "     STATE NUMBER:   "+ state_number);
+         	//list.add(SpreadsheetCellType.STRING.createCell(Integer.parseInt(entry.getKey().x.toString()), Integer.parseInt(entry.getKey().y.toString()), 1, 1, entry.getValue()));
+			  System.out.println(entry.getKey() + "/////////////" + entry.getValue());
+		}
+		
 		   boolean matrix[][] = new boolean[StateList.size()+1][RequirementList.size()+1];
 		     
 			for( InstanceArtifact li: ListOfLinks) {
@@ -246,9 +282,9 @@ public class Main extends Application {
 				for(InstanceArtifact re: RequirementList) {
 					int x=0; 
 					for(InstanceArtifact state: StateList) {
-					if(li.toString().equals(ListOfLinks.get(6).toString())) {
+					/*if(li.toString().equals(ListOfLinks.get(6).toString())) {
 						System.out.println("YEEEES"+x+"     "+y);
-					} 
+					} */
 					 if(li.getPropertyValue("linksource").equals(re) && li.getPropertyValue("linktarget").equals(state)) {   
 						 System.out.println("YEEEES AGAIN"+x+"     "+y);
 				        	matrix[x][y]= true; 
@@ -283,6 +319,7 @@ public class Main extends Application {
         int indexColumn=0; 
         int counter=0; 
         int indexRow=0; 
+      
         for (int row = 0; row < mGridBase.getRowCount(); ++row) {
             final ObservableList<SpreadsheetCell> list = FXCollections.observableArrayList();    
             for (int column = 0; column < mGridBase.getColumnCount(); ++column) {
@@ -308,16 +345,45 @@ public class Main extends Application {
             		else {
                 		list.add(SpreadsheetCellType.STRING.createCell(row, new_column, 1, 1, ""));
                 	}
+            		
+            		
+            		
             	}
             	else {
-            		list.add(SpreadsheetCellType.STRING.createCell(row-1, column-1, 1, 1, ""));
+            		
+            			list.add(SpreadsheetCellType.STRING.createCell(row-1, column-1, 1, 1, ""));
+            			
+            		
             	}	
             	
                 
             }
+            
+            
+          
+            
+            
+            
             rows.add(list);
         }
         
+        //HASHMAP IMPLEMENTATION
+        final ObservableList<SpreadsheetCell> list = FXCollections.observableArrayList();    
+        for(Map.Entry<Pair, String> entry : map.entrySet()) {
+  			 String REQ= entry.getKey().x.getPropertyValue("requirementname").toString(); 
+  			 int req_number = Integer.parseInt(REQ.replaceAll("[a-zA-Z]",""));
+  			 int req= req_number-1; 
+  			 
+  			 String STATE= entry.getKey().y.getPropertyValue("statename").toString(); 
+  			 int state_number = Integer.parseInt(STATE.replaceAll("[a-zA-Z]",""));
+  			 int state= state_number-1; 
+        	list.add(SpreadsheetCellType.STRING.createCell(state_number, req_number, 1, 1, entry.getValue()));
+        	System.out.println("REQUIREMENT   " +req+"STATE   "+state+"VALUE:     "+entry.getValue());
+        //	rows.add(list); 
+           	
+  		}
+       
+		
         System.out.println("I AM HERE");
         
         mGridBase.setRows(rows);
@@ -340,7 +406,9 @@ public class Main extends Application {
     
     
    
-    	
+    public List<Pair> getByIndex(LinkedHashMap<Pair, String> map , int index){
+    	   return (List<Pair>) map.values().toArray()[index];
+    	}
 
 		
 		
