@@ -262,18 +262,7 @@ public class Main extends Application {
 		
 	
 		
-		 for(Map.Entry<Pair, String> entry : map.entrySet()) {
-			 String REQ= entry.getKey().x.getPropertyValue("requirementname").toString(); 
-			 String req_number = REQ.replaceAll("[a-zA-Z]","");
-			 
-			 String STATE= entry.getKey().y.getPropertyValue("statename").toString(); 
-			 String state_number = STATE.replaceAll("[a-zA-Z]","");
-
-			
-         	System.out.println("REQ NUMBER::::::::::::"+ req_number+ "     STATE NUMBER:   "+ state_number);
-         	//list.add(SpreadsheetCellType.STRING.createCell(Integer.parseInt(entry.getKey().x.toString()), Integer.parseInt(entry.getKey().y.toString()), 1, 1, entry.getValue()));
-			  System.out.println(entry.getKey() + "/////////////" + entry.getValue());
-		}
+		
 		
 		   boolean matrix[][] = new boolean[StateList.size()+1][RequirementList.size()+1];
 		     
