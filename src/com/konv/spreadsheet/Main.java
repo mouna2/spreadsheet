@@ -264,8 +264,13 @@ public class Main extends Application {
 		
 		
 		
-		   boolean matrix[][] = new boolean[StateList.size()+1][RequirementList.size()+1];
-		     
+		   String matrix[][] = new String[StateList.size()+1][RequirementList.size()+1];
+		   for (int k = 0; k < StateList.size(); k++) { 
+			   for (int j = 0; j < RequirementList.size(); j++) 
+			   { matrix[k][j]=" "; 
+			   }
+		   }
+
 			for( InstanceArtifact li: ListOfLinks) {
 				int y=0; 
 				for(InstanceArtifact re: RequirementList) {
@@ -276,7 +281,7 @@ public class Main extends Application {
 					} */
 					 if(li.getPropertyValue("linksource").equals(re) && li.getPropertyValue("linktarget").equals(state)) {   
 						 System.out.println("YEEEES AGAIN"+x+"     "+y);
-				        	matrix[x][y]= true; 
+				        	matrix[x][y]= "*"; 
 				        	
 				        }
 					 else {
@@ -305,10 +310,11 @@ public class Main extends Application {
         mGridBase = new GridBase(mRowCount, mColumnCount);
         ObservableList<ObservableList<SpreadsheetCell>> rows = FXCollections.observableArrayList();
         mSpreadsheetController = new SpreadsheetController(mGridBase);
+    
         int indexColumn=0; 
         int counter=0; 
         int indexRow=0; 
-      
+       int mapcounter=0; 
         for (int row = 0; row < mGridBase.getRowCount(); ++row) {
             final ObservableList<SpreadsheetCell> list = FXCollections.observableArrayList();    
             for (int column = 0; column < mGridBase.getColumnCount(); ++column) {
@@ -321,6 +327,102 @@ public class Main extends Application {
             		 indexRow++; 
             	}
             	else  if(row<=StateList.size() && column<=RequirementList.size()  && row>=1 && column>=1) {
+            		System.out.println("ROW:  "+row+ "COLUMN: "+column);
+            		int new_row= row-1;  
+        			int new_column= column-1; 
+        			System.out.println("STATE=======> "+ new_row+"  REQ=======> "+new_column);
+        			System.out.println("MANTRIX ENTRY"+matrix[new_row][new_column]);
+            		if((matrix[new_row][new_column]).equals("*")) {
+            			
+            			
+                		list.add(SpreadsheetCellType.STRING.createCell(row, new_column, 1, 1, "*"));
+                		
+                	}
+            		else {
+                		list.add(SpreadsheetCellType.STRING.createCell(row, new_column, 1, 1, ""));
+                	}
+            		
+            	}
+            	
+            		
+            		
+//            		 for(Pair pair:map.keySet()) 
+//            	        {
+//            			    
+//            	        	String value = map.get(pair);
+//            	        	//System.out.println(value);
+//            	        	
+//            	        	InstanceArtifact ColumnPair = pair.x;
+//            	        	InstanceArtifact rowPair = pair.y;
+//            	        	
+//            	        	//System.out.println(ColumnPair.getPropertyValue("requirementname"));
+//            	        
+//            	        	int columnnum = Integer.parseInt(ColumnPair.getPropertyValue("requirementname").toString().replaceAll("[a-zA-Z]",""));
+//            	        	
+//            	        	int state_number = Integer.parseInt(rowPair.getPropertyValue("statename").toString().replaceAll("[a-zA-Z]",""));
+//            	        	
+//            	        	System.out.println(state_number+"-"+columnnum);
+//            	        	if(map.keySet().contains(pair) && state_number==row) {
+//            	        		SpreadsheetCell shell = SpreadsheetCellType.STRING.createCell(state_number, columnnum, 1, 1, value);
+//                	        	list.add(shell); 
+//            	        	}
+//            	        	else {
+//            	        		SpreadsheetCell shell = SpreadsheetCellType.STRING.createCell(state_number, columnnum, 1, 1, " ");
+//                	        	list.add(shell); 
+//            	        	}
+//            	        	
+//            	        }
+            		
+//            		for(Pair p: map.keySet()) {
+//            			System.out.println(p.x+"   SECOND ELEMENT OF PAIR  "+ p.y);
+//            			if(p.GetFirst(p).equals(StateList.get(row-1)) && p.GetSecond(p).equals(RequirementList.get(column-1))) {
+//            				System.out.println( "**************************************YEEEEEEES"); 
+//            			}
+//            		}
+//            		
+//            		System.out.println( "**************************************\n"+RequirementList.get(column-1) +"   ========>    "+StateList.get(row-1));
+//            		
+//            		
+//            		
+//            		if( map.keySet().contains(new Pair(StateList.get(row-1), RequirementList.get(column-1)))){
+//            			System.out.println("I AM HERREE"); 
+//            			list.add(SpreadsheetCellType.STRING.createCell(row, column-1, 1, 1, map.get(new Pair(StateList.get(row), RequirementList.get(column)))));
+//            		}
+//            		
+//            	
+//            			
+//            		
+//            		else {
+//            			list.add(SpreadsheetCellType.STRING.createCell(row, column-1, 1, 1, " "));
+//
+//            		}
+//            	}
+//            		
+            		
+            	else {
+            		
+            			list.add(SpreadsheetCellType.STRING.createCell(row, column-1, 1, 1, " "));
+            			
+            		
+            	}	
+            	
+                
+            }
+            
+            
+          
+            
+            
+            
+            rows.add(list);
+        }
+        
+
+       
+            
+            	//}
+            	/*else  if(row<=StateList.size() && column<=RequirementList.size()  && row>=1 && column>=1) {
+            		int new_column= column - 1; 
             		System.out.println("ROW:  "+row+ "COLUMN: "+column);
             		int new_row= row-1;  
         			int new_column= column-1; 
@@ -343,35 +445,51 @@ public class Main extends Application {
             			list.add(SpreadsheetCellType.STRING.createCell(row-1, column-1, 1, 1, ""));
             			
             		
-            	}	
+            	}	*/
             	
                 
-            }
             
-            
-          
-            
-            
-            
-            rows.add(list);
-        }
-        
-        //HASHMAP IMPLEMENTATION
-        final ObservableList<SpreadsheetCell> list = FXCollections.observableArrayList();    
-        for(Map.Entry<Pair, String> entry : map.entrySet()) {
-  			 String REQ= entry.getKey().x.getPropertyValue("requirementname").toString(); 
-  			 int req_number = Integer.parseInt(REQ.replaceAll("[a-zA-Z]",""));
-  			 int req= req_number-1; 
-  			 
-  			 String STATE= entry.getKey().y.getPropertyValue("statename").toString(); 
-  			 int state_number = Integer.parseInt(STATE.replaceAll("[a-zA-Z]",""));
-  			 int state= state_number-1; 
-        	list.add(SpreadsheetCellType.STRING.createCell(state_number, req_number, 1, 1, entry.getValue()));
-        	System.out.println("REQUIREMENT   " +req+"STATE   "+state+"VALUE:     "+entry.getValue());
-        //	rows.add(list); 
-           	
-  		}
        
+        
+      
+        //HASHMAP IMPLEMENTATION
+        //final ObservableList<SpreadsheetCell> list = FXCollections.observableArrayList();
+      /*  for(Pair pair:map.keySet()) 
+        {
+        	String value = map.get(pair);
+        	//System.out.println(value);
+        	
+        	InstanceArtifact column = pair.x;
+        	InstanceArtifact row = pair.y;
+        	
+        	System.out.println(column.getPropertyValue("requirementname"));
+        	
+        	int columnnum = Integer.parseInt(column.getPropertyValue("requirementname").toString().replaceAll("[a-zA-Z]",""));
+        	
+        	int state_number = Integer.parseInt(row.getPropertyValue("statename").toString().replaceAll("[a-zA-Z]",""));
+        	
+        	System.out.println(state_number+"-"+columnnum);
+        	
+        	SpreadsheetCell shell = SpreadsheetCellType.STRING.createCell(state_number, columnnum, 1, 1, value);
+        	//list.add(shell);
+        	
+        	
+        	
+        }*/
+  //     for(Map.Entry<Pair, String> entry : map.entrySet()) {
+  //			 String REQ= entry.getKey().x.getPropertyValue("requirementname").toString(); 
+  //			 int req_number = Integer.parseInt(REQ.replaceAll("[a-zA-Z]",""));
+  //			 int req= req_number-1; 
+  			 
+ // 			 String STATE= entry.getKey().y.getPropertyValue("statename").toString(); 
+ // 			 int state_number = Integer.parseInt(STATE.replaceAll("[a-zA-Z]",""));
+ // 			 int state= state_number-1; 
+ //      	list.add(SpreadsheetCellType.STRING.createCell(state, req, 1, 1, entry.getValue()));
+ //       	System.out.println("REQUIREMENT   " +req+"STATE   "+state+"VALUE:     "+entry.getValue());
+        	
+          	
+//  		}
+ //      rows.add(list2); 
 		
         System.out.println("I AM HERE");
         
@@ -387,7 +505,7 @@ public class Main extends Application {
         for (SpreadsheetColumn c : mSpreadsheet.getColumns()) c.setPrefWidth(90);
     }
 
-    private void updateTextField() {
+	private void updateTextField() {
         int focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
         int focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
         mTextField.setText(mSpreadsheetController.getCell(focusedRow, focusedColumn).getFormula());
