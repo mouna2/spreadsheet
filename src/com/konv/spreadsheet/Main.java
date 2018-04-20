@@ -214,6 +214,8 @@ public class Main extends Application {
    	    		 initSpreadsheet();
    	    	}
    	    	else {
+   	    	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+              focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
    	    		value="*"; 
   	    		 System.out.println(value);
    	    		initSpreadsheet2();
@@ -236,6 +238,8 @@ public class Main extends Application {
     	    		 initSpreadsheet();
     	    	}
     	    	else {
+    	    		  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+    	                 focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
     	    		value="?"; 
       	    		 System.out.println(value);
     	    		initSpreadsheet2();
@@ -249,18 +253,21 @@ public class Main extends Application {
     	    public void handle(ActionEvent e) {
     	    	firstoccurrence=true; 
     	        System.out.println("  ");
-    	         focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
-                 focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
+    	       
               //  mSpreadsheet.getGrid().setCellValue(focusedRow, focusedColumn, mTextField.getText());
                 
                 System.out.println("FOCUSED ROW: "+focusedRow);
                 System.out.println("FOCUSED COLUMN: "+focusedColumn);
     	        if(Combination.equals("Requirement-State")) {
+    	        	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+    	                 focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
     	        	value=" "; 
    	    		 System.out.println(" ");
    	    		 initSpreadsheet();
    	    	}
    	    	else {
+   	    	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+              focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
    	    		value=" "; 
   	    		 System.out.println(value);
    	    		initSpreadsheet2();
