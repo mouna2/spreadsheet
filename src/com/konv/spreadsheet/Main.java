@@ -81,7 +81,8 @@ public class Main extends Application {
     List<InstanceArtifact> StateList= new ArrayList<InstanceArtifact>(); 
     List<InstanceArtifact> RequirementList= new ArrayList<InstanceArtifact>(); 
     List<InstanceArtifact> LinkList = new ArrayList<InstanceArtifact>(); 
-  
+
+   
     @Override
     public void start(Stage primaryStage) throws Exception {
         initUi(primaryStage);
@@ -143,6 +144,7 @@ public class Main extends Application {
                    initUi(stage);
               }
                if(Combination.equals("Code-StateMachine")) {
+            	   
            	      initSpreadsheet2();
                   VBox.setVgrow(mSpreadsheet, Priority.ALWAYS);
                   Flag1=true; 
@@ -166,6 +168,7 @@ public class Main extends Application {
             VBox.setVgrow(mSpreadsheet, Priority.ALWAYS);
         }
         else {
+        	 
         	initSpreadsheet2();
             VBox.setVgrow(mSpreadsheet, Priority.ALWAYS);
         }
@@ -958,32 +961,40 @@ private void initSpreadsheet2() {
 		firstoccurrence=true; 
 	}
 	
+		
+		 focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+         focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
+	
+	
     System.out.println("ROW   "+ focusedRow+ "COLUMN:   "+focusedColumn+ "COMBINATION"+ Combination); 
 	if(focusedRow!=-1 && focusedColumn!=-1 && Combination.equals("Code-StateMachine")) {
-		System.out.println("============================================================================================================");
-		boolean found= false; 
-		InstanceArtifact new_link= defaultInstancePackage.createInstance(LinkType);
-		int num = ListOfLinks.size()+1; 
-		new_link.setPropertyValue("linkname", "l"+Integer.toString(num));
-		new_link.setPropertyValue("linktype", "Code-StateMachine"); 
 		
-		new_link.setPropertyValue("linksource", ListofCode.get(focusedColumn-1));
-		new_link.setPropertyValue("linktarget", ListofStateMachines.get(focusedRow-1));
-		new_link.setPropertyValue("linkstyle", value); 
-		
-		
-		
-		for(InstanceArtifact li: ListOfLinks) {
-			if(li.getPropertyValue("linksource").equals(new_link.getPropertyValue("linksource")) && li.getPropertyValue("linktarget").equals(new_link.getPropertyValue("linktarget"))) {
-				li.setPropertyValue("linkstyle", new_link.getPropertyValue("linkstyle")); 
-				found=true; 
-				 
+			System.out.println("============================================================================================================");
+			boolean found= false; 
+			InstanceArtifact new_link= defaultInstancePackage.createInstance(LinkType);
+			int num = ListOfLinks.size()+1; 
+			new_link.setPropertyValue("linkname", "l"+Integer.toString(num));
+			new_link.setPropertyValue("linktype", "Code-StateMachine"); 
+			
+			new_link.setPropertyValue("linksource", ListofCode.get(focusedColumn-1));
+			new_link.setPropertyValue("linktarget", ListofStateMachines.get(focusedRow-1));
+			new_link.setPropertyValue("linkstyle", value); 
+			
+			
+			
+			for(InstanceArtifact li: ListOfLinks) {
+				if(li.getPropertyValue("linksource").equals(new_link.getPropertyValue("linksource")) && li.getPropertyValue("linktarget").equals(new_link.getPropertyValue("linktarget"))) {
+					li.setPropertyValue("linkstyle", new_link.getPropertyValue("linkstyle")); 
+					found=true; 
+					 
+				}
 			}
+			
+		if(found==false) {
+			ListOfLinks.add(new_link); 
 		}
 		
-	if(found==false) {
-		ListOfLinks.add(new_link); 
-	}
+		
 		
 		
 	}
