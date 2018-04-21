@@ -1,9 +1,11 @@
 package com.konv.spreadsheet;
 
 import javafx.application.Application;
+import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,6 +15,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
@@ -28,8 +31,10 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,9 +53,10 @@ import at.jku.isse.designspace.richapi.model.TypeArtifact;
 import at.jku.isse.designspace.richapi.model.Workspace;
 import at.jku.isse.designspace.richapi.model.impl.ProjectArtifactImpl;
 import at.jku.isse.designspace.richapi.model.impl.PropertyTypeArtifactImpl;
+import impl.org.controlsfx.spreadsheet.SelectedCellsMapTemp;
 import impl.org.controlsfx.spreadsheet.SpreadsheetGridView;
 
-public class Main extends Application {
+public class Main<S> extends Application {
 	private static Workspace clientConnectionHandler = Workspace.init(InetAddress.getLoopbackAddress().getHostAddress(), null);
 	private static PrimitiveAPI clientConnection = clientConnectionHandler.getClientConnection();
 	  String option1=""; 
@@ -80,9 +86,11 @@ public class Main extends Application {
     List<InstanceArtifact> ListOfLinks= new ArrayList<InstanceArtifact>(); 
     List<InstanceArtifact> StateList= new ArrayList<InstanceArtifact>(); 
     List<InstanceArtifact> RequirementList= new ArrayList<InstanceArtifact>(); 
-    List<InstanceArtifact> LinkList = new ArrayList<InstanceArtifact>(); 
+    List<InstanceArtifact> LinkList = new ArrayList<InstanceArtifact>();
+	
+    ObservableList<TablePosition>selectedcells =null;
 
-   
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
         initUi(primaryStage);
@@ -162,6 +170,8 @@ public class Main extends Application {
             
             System.out.println("FOCUSED ROW: "+focusedRow);
             System.out.println("FOCUSED COLUMN: "+focusedColumn);
+        
+            
         });
         if(Flag1==false) {
         	initSpreadsheet();
@@ -203,23 +213,25 @@ public class Main extends Application {
     	item1.setOnAction(new EventHandler<ActionEvent>() {
     	    public void handle(ActionEvent e) {
     	    	firstoccurrence=true; 
-    	    	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
-                 focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
-               //  mSpreadsheet.getGrid().setCellValue(focusedRow, focusedColumn, mTextField.getText());
-                 
+    	    	value="*"; 
+    	    	selectedcells = SelectedCells(mSpreadsheet ); 
+     	     	if(selectedcells.size()==1) {
+             		focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+                     focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
+         	   	}
+     	     	
                  System.out.println("FOCUSED ROW: "+focusedRow);
                  System.out.println("FOCUSED COLUMN: "+focusedColumn);
     	    	
     	    	
     	    	if(Combination.equals("Requirement-State")) {
-    	    		value="*"; 
+    	    	
    	    		 System.out.println(value);
    	    		 initSpreadsheet();
    	    	}
    	    	else {
-   	    	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
-              focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
-   	    		value="*"; 
+   	    	 
+   	    	
   	    		 System.out.println(value);
    	    		initSpreadsheet2();
    	    	}
@@ -230,20 +242,24 @@ public class Main extends Application {
     	item2.setOnAction(new EventHandler<ActionEvent>() {
     	    public void handle(ActionEvent e) {
     	    	firstoccurrence=true; 
-    	    	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
-                  focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
+    	    	value="?"; 
+    	    	selectedcells = SelectedCells(mSpreadsheet ); 
+    	     	if(selectedcells.size()==1) {
+            		focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+                    focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
+        	   	}
+    	    	
                //  mSpreadsheet.getGrid().setCellValue(focusedRow, focusedColumn, mTextField.getText());
                  
                  System.out.println("FOCUSED ROW: "+focusedRow);
                  System.out.println("FOCUSED COLUMN: "+focusedColumn);
     	    	if(Combination.equals("Requirement-State")) {
-    	    		value="?"; 
+    	    		
     	    		 initSpreadsheet();
     	    	}
     	    	else {
-    	    		  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
-    	                 focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
-    	    		value="?"; 
+    	    		 
+    	    	
       	    		 System.out.println(value);
     	    		initSpreadsheet2();
     	    	}
@@ -255,31 +271,41 @@ public class Main extends Application {
     	item3.setOnAction(new EventHandler<ActionEvent>() {
     	    public void handle(ActionEvent e) {
     	    	firstoccurrence=true; 
+    	    	value=" "; 
     	        System.out.println("  ");
-    	       
+    	     selectedcells = SelectedCells(mSpreadsheet ); 
+  	    		 
               //  mSpreadsheet.getGrid().setCellValue(focusedRow, focusedColumn, mTextField.getText());
-                
+    	   	if(selectedcells.size()==1) {
+        		focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
+                focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
+    	   	}
                 System.out.println("FOCUSED ROW: "+focusedRow);
                 System.out.println("FOCUSED COLUMN: "+focusedColumn);
     	        if(Combination.equals("Requirement-State")) {
-    	        	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
-    	                 focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
-    	        	value=" "; 
-   	    		 System.out.println(" ");
-   	    		 initSpreadsheet();
-   	    	}
+    	        
+   	        	value=" "; 
+  	    		 System.out.println(" ");
+  	    		 initSpreadsheet();
+    	        	}
+    	        	  
+   	    	
    	    	else {
-   	    	  focusedRow = mSpreadsheet.getSelectionModel().getFocusedCell().getRow();
-              focusedColumn = mSpreadsheet.getSelectionModel().getFocusedCell().getColumn();
-   	    		value=" "; 
-  	    		 System.out.println(value);
-   	    		initSpreadsheet2();
+   	    		
+      	    		
+     	    		 System.out.println(value);
+     	    		
+     	    		 
+     	    		 
+      	    		initSpreadsheet2();
+   	    		
+   	    	 
    	    	}
     	        initUi(stage);
     	    }
     	});
     	contextMenu.getItems().addAll(item1, item2, item3);
-
+    	
     	final TextField textField = new TextField("Type Something");
     	textField.setContextMenu(contextMenu);
     }
@@ -540,14 +566,18 @@ public class Main extends Application {
 		}
 		
         System.out.println("ROW   "+ focusedRow+ "COLUMN:   "+focusedColumn+ "COMBINATION"+ Combination); 
+        
+        	
+       // boolean singlecell=false; 
 		if(focusedRow!=-1 && focusedColumn!=-1 && Combination.equals("Requirement-State")) {
+			//singlecell=true; 
 			boolean found= false; 
 			InstanceArtifact new_link= defaultInstancePackage.createInstance(LinkType);
 			int num = ListOfLinks.size()+1; 
 			new_link.setPropertyValue("linkname", "l"+Integer.toString(num));
 			new_link.setPropertyValue("linktype", "State-Requirement"); 
 			
-			new_link.setPropertyValue("linksource", RequirementList.get(focusedColumn-1));
+			new_link.setPropertyValue("linksource", RequirementList.get(focusedColumn-2));
 			new_link.setPropertyValue("linktarget", StateList.get(focusedRow-1));
 			new_link.setPropertyValue("linkstyle", value); 
 			
@@ -567,7 +597,34 @@ public class Main extends Application {
 			
 		}
 		
-		
+     if(selectedcells!=null ){
+        	for(TablePosition cell: selectedcells) {
+        		boolean found= false; 
+    			InstanceArtifact new_link= defaultInstancePackage.createInstance(LinkType);
+    			int num = ListOfLinks.size()+1; 
+    			new_link.setPropertyValue("linkname", "l"+Integer.toString(num));
+    			new_link.setPropertyValue("linktype", "State-Requirement"); 
+    			
+    			new_link.setPropertyValue("linksource", RequirementList.get(cell.getColumn()-1));
+    			new_link.setPropertyValue("linktarget", StateList.get(cell.getRow()-1));
+    			new_link.setPropertyValue("linkstyle", value); 
+    			
+    			
+    			
+    			for(InstanceArtifact li: ListOfLinks) {
+    				if(li.getPropertyValue("linksource").equals(new_link.getPropertyValue("linksource")) && li.getPropertyValue("linktarget").equals(new_link.getPropertyValue("linktarget"))) {
+    					li.setPropertyValue("linkstyle", new_link.getPropertyValue("linkstyle")); 
+    					found=true; 
+    				}
+    			}
+    			
+    		if(found==false) {
+    			ListOfLinks.add(new_link); 
+    		}
+    			
+    		
+        	}
+        }
 		
 		
 		
@@ -700,9 +757,17 @@ public class Main extends Application {
 	        System.out.println("I AM HERE 3");
 	        mSpreadsheet = new SpreadsheetView(mGridBase);
 	        System.out.println("I AM HERE 4");
-	        mSpreadsheet.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+	       mSpreadsheet.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+	      
+	       
+	       
 	        mSpreadsheet.addEventFilter(KeyEvent.KEY_RELEASED, e -> updateTextField());
 	        mSpreadsheet.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> updateTextField());
+	 //      ObservableList<TablePosition> selectedItems = mSpreadsheet.getSelectionModel().getSelectedCells();
+	  //      for(TablePosition pos: selectedItems) {
+		//    	   System.out.println("HERE IS ONE CELL================================>:   "+pos);
+		//       }
+	        
 	        for (SpreadsheetColumn c : mSpreadsheet.getColumns()) c.setPrefWidth(90);
 			
 			
@@ -967,8 +1032,9 @@ private void initSpreadsheet2() {
 	
 	
     System.out.println("ROW   "+ focusedRow+ "COLUMN:   "+focusedColumn+ "COMBINATION"+ Combination); 
+   // boolean singlecell=false; 
 	if(focusedRow!=-1 && focusedColumn!=-1 && Combination.equals("Code-StateMachine")) {
-		
+		  //singlecell=true;
 			System.out.println("============================================================================================================");
 			boolean found= false; 
 			InstanceArtifact new_link= defaultInstancePackage.createInstance(LinkType);
@@ -976,7 +1042,7 @@ private void initSpreadsheet2() {
 			new_link.setPropertyValue("linkname", "l"+Integer.toString(num));
 			new_link.setPropertyValue("linktype", "Code-StateMachine"); 
 			
-			new_link.setPropertyValue("linksource", ListofCode.get(focusedColumn-1));
+			new_link.setPropertyValue("linksource", ListofCode.get(focusedColumn-2));
 			new_link.setPropertyValue("linktarget", ListofStateMachines.get(focusedRow-1));
 			new_link.setPropertyValue("linkstyle", value); 
 			
@@ -999,7 +1065,36 @@ private void initSpreadsheet2() {
 		
 	}
 	
-	
+	  selectedcells = SelectedCells(mSpreadsheet ); 
+  if(selectedcells!=null ){
+     	for(TablePosition cell: selectedcells) {
+     		boolean found= false; 
+ 			InstanceArtifact new_link= defaultInstancePackage.createInstance(LinkType);
+ 			int num = ListOfLinks.size()+1; 
+ 			new_link.setPropertyValue("linkname", "l"+Integer.toString(num));
+ 			new_link.setPropertyValue("linktype", "Code-StateMachine"); 
+ 			
+ 			new_link.setPropertyValue("linksource", ListofCode.get(cell.getColumn()-1));
+ 			new_link.setPropertyValue("linktarget", ListofStateMachines.get(cell.getRow()-1));
+ 			new_link.setPropertyValue("linkstyle", value); 
+ 			
+ 			
+ 			
+ 			for(InstanceArtifact li: ListOfLinks) {
+ 				if(li.getPropertyValue("linksource").equals(new_link.getPropertyValue("linksource")) && li.getPropertyValue("linktarget").equals(new_link.getPropertyValue("linktarget"))) {
+ 					li.setPropertyValue("linkstyle", new_link.getPropertyValue("linkstyle")); 
+ 					found=true; 
+ 				}
+ 			}
+ 			
+ 		if(found==false) {
+ 			ListOfLinks.add(new_link); 
+ 		}
+ 			
+ 		
+     	}
+     }
+		
 	
 	
 	
@@ -1149,7 +1244,14 @@ System.out.println("ARTIFACT 1: "+ artifact1+ "artifact 2: "+artifact2);
     	   return (List<Pair>) map.values().toArray()[index];
     	}
 
-		
+   public ObservableList<TablePosition> SelectedCells(SpreadsheetView mSpreadsheet) {
+	   ObservableList<TablePosition> selectedItems = mSpreadsheet.getSelectionModel().getSelectedCells(); 
+	        for(TablePosition pos: selectedItems) {
+		    	   System.out.println("HERE IS ONE CELL================================>COLUMN:   "+pos.getColumn()+ "ROW:     "+pos.getRow());
+		      }
+	        
+	        return selectedItems; 
+   }
 		
     
 }
